@@ -1,6 +1,4 @@
-import { useEffect, useState } from "react";
-import { Product } from "../models/product";
-import Catalog from "../../features/catalog/Catalog";
+import { useState } from "react";
 import {
     Box,
     Container,
@@ -9,17 +7,11 @@ import {
     ThemeProvider,
 } from "@mui/material";
 import Navbar from "./Navbar";
+import { Outlet } from "react-router-dom";
 
 function App() {
-    const [products, setProducts] = useState<Product[]>([]);
     const [darkMode, setDarkMode] = useState(false);
     const paletteType = darkMode ? "dark" : "light";
-
-    useEffect(() => {
-        fetch("https://localhost:5001/api/products")
-            .then((response) => response.json())
-            .then((data) => setProducts(data));
-    }, []);
 
     const toggleDarkMode = () => {
         setDarkMode(!darkMode);
@@ -40,7 +32,7 @@ function App() {
             <CssBaseline /> {/*thiết lập kiểu css cho toàn bộ ứng dung */}
             <Box
                 sx={{
-                    height: "100vh",
+                    minHeight: "100vh",
                     background: darkMode
                         ? "radial-gradient(circle, #1e3aBa, #111B27)"
                         : "radial-gradient(circle, #baecf9, #f0f9ff)",
@@ -48,7 +40,7 @@ function App() {
                 }}
             >
                 <Container maxWidth="xl" sx={{ marginTop: 8 }}>
-                    <Catalog products={products} />
+                    <Outlet />
                 </Container>
             </Box>
         </ThemeProvider>
