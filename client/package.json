@@ -16,9 +16,12 @@
     "@mui/icons-material": "^6.4.0",
     "@mui/material": "^6.4.0",
     "@mui/styled-engine-sc": "^6.4.0",
+    "@reduxjs/toolkit": "^2.5.0",
     "react": "^19.0.0-rc.1",
     "react-dom": "^19.0.0-rc.1",
+    "react-redux": "^9.2.0",
     "react-router-dom": "^7.1.1",
+    "react-toastify": "^11.0.3",
     "styled-components": "^6.1.14"
   },
   "devDependencies": {
