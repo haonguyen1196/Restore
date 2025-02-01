@@ -10,25 +10,27 @@ import {
     Toolbar,
     Typography,
 } from "@mui/material";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../store/store";
 import { setDarkMode } from "./uiSlice";
+import { useFetchBasketQuery } from "../../features/basket/basketApi";
 
 const midLinks = [
-    { title: "catalog", path: "/catalog" },
-    { title: "about", path: "/about" },
-    { title: "contact", path: "/contact" },
+    { title: "sản phẩm", path: "/catalog" },
+    { title: "về chúng tôi", path: "/about" },
+    { title: "liên hệ", path: "/contact" },
 ];
 
 const rightLinks = [
-    { title: "login", path: "/login" },
-    { title: "register", path: "/register" },
+    { title: "đăng nhập", path: "/login" },
+    { title: "đăng ký", path: "/register" },
 ];
 
 const navStyles = {
     color: "inherit",
     typography: "h6",
     textDecoration: "none",
+    whiteSpace: "nowrap",
     "&:hover": {
         color: "grey.500",
     },
@@ -40,6 +42,11 @@ const navStyles = {
 export default function Navbar() {
     const { isLoading, darkMode } = useAppSelector((state) => state.ui);
     const dispatch = useAppDispatch();
+    const { data: basket } = useFetchBasketQuery();
+
+    const itemCount =
+        basket?.items.reduce((sum, item) => (sum += item.quantity), 0) || 0;
+
     return (
         <AppBar position="fixed">
             <Toolbar
@@ -56,7 +63,7 @@ export default function Navbar() {
                         variant="h6"
                         sx={navStyles}
                     >
-                        RE-STORE
+                        STORE
                     </Typography>
                     <IconButton
                         onClick={() => dispatch(setDarkMode())}
@@ -70,7 +77,7 @@ export default function Navbar() {
                     </IconButton>
                 </Box>
 
-                <List sx={{ display: "flex" }}>
+                <List sx={{ display: "flex", paddingLeft: "56px" }}>
                     {midLinks.map(({ title, path }) => (
                         <ListItem
                             component={NavLink}
@@ -84,8 +91,13 @@ export default function Navbar() {
                 </List>
 
                 <Box sx={{ display: "flex" }}>
-                    <IconButton size="large" sx={{ color: "inherit" }}>
-                        <Badge badgeContent="4" color="secondary">
+                    <IconButton
+                        component={Link}
+                        to="/basket"
+                        size="large"
+                        sx={{ color: "inherit" }}
+                    >
+                        <Badge badgeContent={itemCount} color="secondary">
                             <ShoppingCart />
                         </Badge>
                     </IconButton>

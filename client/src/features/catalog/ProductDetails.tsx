@@ -12,21 +12,58 @@ import {
     Typography,
 } from "@mui/material";
 import { useFetchProductDetailQuery } from "./catalogApi";
+import {
+    useAddBasketItemMutation,
+    useFetchBasketQuery,
+    useRemoveBasketItemMutation,
+} from "../basket/basketApi";
+import { ChangeEvent, useEffect, useState } from "react";
 
 export default function ProductDetails() {
     const { id } = useParams();
+    const [removeBasketItem] = useRemoveBasketItemMutation();
+    const [addBasketItem] = useAddBasketItemMutation();
+    const { data: basket } = useFetchBasketQuery();
+    const [quantity, setQuantity] = useState(0);
+
+    const item = basket?.items.find((x) => x.productId === +id!);
+
+    useEffect(() => {
+        if (item) setQuantity(item.quantity);
+    }, [item]);
+
     const { data: product, isLoading } = useFetchProductDetailQuery(
         id ? +id : 0
     );
 
-    if (isLoading || !product) return <div>Loading...</div>;
+    if (isLoading || !product) return <div>Đang tải...</div>;
+
+    const handleUpdateBasket = () => {
+        const updateQuantity = item
+            ? Math.abs(quantity - item.quantity)
+            : quantity;
+        if (!item || quantity > item.quantity) {
+            addBasketItem({ product, quantity: updateQuantity });
+        } else {
+            removeBasketItem({
+                productId: product.id,
+                quantity: updateQuantity,
+            });
+        }
+    };
+
+    const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const value = +event.currentTarget.value;
+
+        if (value >= 0) setQuantity(value);
+    };
 
     const productDetails = [
-        { label: "Name", value: product.name },
-        { label: "Description", value: product.description },
-        { label: "Type", value: product.type },
-        { label: "Brand", value: product.brand },
-        { label: "Quantity in stock", value: product.quantityInStock },
+        { label: "Tên sản phẩm", value: product.name },
+        { label: "Mô tả", value: product.description },
+        { label: "Loại", value: product.type },
+        { label: "Nhãn hàng", value: product.brand },
+        { label: "Số lượng trong kho", value: product.quantityInStock },
     ];
 
     return (
@@ -64,19 +101,25 @@ export default function ProductDetails() {
                             type="number"
                             variant="outlined"
                             fullWidth
-                            label="Quantity in basket"
-                            defaultValue={1}
+                            label="Số lượng thêm vào giỏ hàng"
+                            value={quantity}
+                            onChange={handleInputChange}
                         />
                     </Grid2>
                     <Grid2 size={6}>
                         <Button
+                            onClick={handleUpdateBasket}
+                            disabled={
+                                item?.quantity === quantity ||
+                                (!item && quantity === 0)
+                            }
                             variant="contained"
                             color="primary"
                             size="large"
                             fullWidth
                             sx={{ height: "55px" }}
                         >
-                            Add to cart
+                            Thêm vào giỏ hàng
                         </Button>
                     </Grid2>
                 </Grid2>

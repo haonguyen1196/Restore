@@ -20,7 +20,7 @@ var app = builder.Build();
 app.UseMiddleware<ExceptionMiddleware>();// sử dụng middle
 app.UseCors(opt =>
 {
-    opt.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:3000");
+    opt.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("https://localhost:3000");
 });// cấu hình cors
 
 app.MapControllers();
