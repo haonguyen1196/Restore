@@ -1,5 +1,6 @@
 using System;
 using API.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Data;
@@ -12,12 +13,36 @@ public class DbInitializer
         var context = scope.ServiceProvider.GetRequiredService<StoreContext>() // lấy storecontext được đăng ký trong program
             ?? throw new InvalidOperationException("Failed to retrieve store context"); // k có thẻ bắn lỗi
 
-        SeedData(context);
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>() //Lấy UserManager<User> từ Dependency Injection (DI).
+       ?? throw new InvalidOperationException("Failed to retrieve user manager"); // Nếu không tìm thấy UserManager<User>, nó sẽ ném lỗi ngay lập tức.
+
+        SeedData(context, userManager); // cung cấp các service
     }
 
-    private static void SeedData(StoreContext context)
+    private static async void SeedData(StoreContext context, UserManager<User> userManager)
     {
         context.Database.Migrate(); // csdl sẽ được cập nhật hoặc tạo nếu cần dựa trên file migration
+
+        if (!userManager.Users.Any()) // nếu chưa có người dùng vào thì sẽ tạo ra 2 người dùng bên dưới kèm vai trò
+        {
+            var user = new User
+            {
+                UserName = "bob@test.com",
+                Email = "bob@test.com"
+            };
+
+            await userManager.CreateAsync(user, "Pa$$w0rd");
+            await userManager.AddToRoleAsync(user, "Member");
+
+            var admin = new User
+            {
+                UserName = "admin@test.com",
+                Email = "admin@test.com"
+            };
+
+            await userManager.CreateAsync(admin, "Pa$$w0rd");
+            await userManager.AddToRolesAsync(admin, ["Member", "Admin"]);
+        }
 
         if (context.Products.Any()) return; // đảm bảo dữ liệu sẽ chỉ được thêm 1 lần trong bảng products
 
