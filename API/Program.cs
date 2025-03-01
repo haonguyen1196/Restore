@@ -1,6 +1,7 @@
 using API.Data;
 using API.Entities;
 using API.Middleware;
+using API.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,6 +16,7 @@ builder.Services.AddDbContext<StoreContext>(opt =>
 
 builder.Services.AddCors();// thêm cors
 builder.Services.AddTransient<ExceptionMiddleware>();// DI cho middle
+builder.Services.AddScoped<PaymentsService>();
 // thêm các endpoint cho hệ thống xác thực người dùng
 builder.Services.AddIdentityApiEndpoints<User>(opt =>
 {

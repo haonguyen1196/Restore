@@ -2,6 +2,7 @@ import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithErrorHandling } from "../../app/api/baseApi";
 import { Basket, Item } from "../../app/models/basket";
 import { Product } from "../../app/models/product";
+import Cookies from "js-cookie";
 
 //là hàm check dữ liệu truyền vào là product hay là Item
 function isBasketItem(product: Product | Item): product is Item {
@@ -35,6 +36,7 @@ export const basketApi = createApi({
                 { product, quantity },
                 { dispatch, queryFulfilled }
             ) => {
+                let isNewBasket = false;
                 const patchResult = dispatch(
                     basketApi.util.updateQueryData(
                         "fetchBasket",
@@ -44,29 +46,33 @@ export const basketApi = createApi({
                                 ? product.productId
                                 : product.id;
 
-                            const existingItem = draft.items.find(
-                                (item) => item.productId === productId
-                            );
+                            if (!draft?.basketId) isNewBasket = true;
 
-                            if (existingItem) {
-                                existingItem.quantity += quantity;
-                            } else {
-                                draft.items.push(
-                                    isBasketItem(product)
-                                        ? product
-                                        : {
-                                              ...product,
-                                              productId: product.id,
-                                              quantity: quantity,
-                                          }
+                            if (!isNewBasket) {
+                                const existingItem = draft?.items?.find(
+                                    (item) => item.productId === productId
                                 );
+
+                                if (existingItem) {
+                                    existingItem.quantity += quantity;
+                                } else {
+                                    draft.items.push(
+                                        isBasketItem(product)
+                                            ? product
+                                            : {
+                                                  ...product,
+                                                  productId: product.id,
+                                                  quantity: quantity,
+                                              }
+                                    );
+                                }
                             }
                         }
                     )
                 );
                 try {
                     await queryFulfilled;
-                    // dispatch(basketApi.util.invalidateTags(["Basket"])); // mỗi khi add item vào giỏ hàng thành công sẽ thông báo cần fetch lại dữ liệu với tag tương ứng
+                    dispatch(basketApi.util.invalidateTags(["Basket"])); // mỗi khi add item vào giỏ hàng thành công sẽ thông báo cần fetch lại dữ liệu với tag tương ứng
                 } catch (error) {
                     console.log(error);
                     patchResult.undo();
@@ -111,6 +117,21 @@ export const basketApi = createApi({
                 }
             },
         }),
+        clearBasket: builder.mutation<void, void>({
+            queryFn: () => ({ data: undefined }),
+            onQueryStarted: async (_, { dispatch }) => {
+                dispatch(
+                    basketApi.util.updateQueryData(
+                        "fetchBasket",
+                        undefined,
+                        (draft) => {
+                            draft.items = [];
+                        }
+                    )
+                );
+                Cookies.remove("basketId");
+            },
+        }),
     }),
 });
 
@@ -118,4 +139,5 @@ export const {
     useFetchBasketQuery,
     useAddBasketItemMutation,
     useRemoveBasketItemMutation,
+    useClearBasketMutation,
 } = basketApi;
