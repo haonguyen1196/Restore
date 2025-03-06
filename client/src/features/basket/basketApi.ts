@@ -126,6 +126,7 @@ export const basketApi = createApi({
                         undefined,
                         (draft) => {
                             draft.items = [];
+                            draft.basketId = "";
                         }
                     )
                 );

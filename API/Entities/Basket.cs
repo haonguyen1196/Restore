@@ -13,7 +13,7 @@ public class Basket
     public void AddItem(Product product, int quantity)
     {
         if (product == null) ArgumentNullException.ThrowIfNull(product);
-        if (quantity < 0) throw new ArgumentException("Quantity should be greater than zero", nameof(quantity));
+        if (quantity < 0) throw new ArgumentException("Số lượng phải lớn hơn 0", nameof(quantity));
 
         var existingItem = FindItem(product.Id);
 
@@ -33,7 +33,7 @@ public class Basket
 
     public void RemoveItem(int productId, int quantity)
     {
-        if (quantity <= 0) throw new ArgumentException("Quantity should be greater than zero", nameof(quantity));
+        if (quantity <= 0) throw new ArgumentException("Số lượng phải lớn hơn 0", nameof(quantity));
 
         var item = FindItem(productId);
 

@@ -28,7 +28,7 @@ namespace API.Controllers
 
             var product = await context.Products.FindAsync(productId); // tìm sẩn phẩm nếu k có thì báo lỗi
 
-            if (product == null) return BadRequest("Problem adding item to basket");
+            if (product == null) return BadRequest("Có lỗi khi thêm sản phẩm vào giỏ hàng");
 
             basket.AddItem(product, quantity); // thêm sản phẩm vào rổ và lưu vào bộ nhớ tạm
 
@@ -36,7 +36,7 @@ namespace API.Controllers
 
             if (result) return CreatedAtAction(nameof(GetBasket), basket.ToDto()); // trả về http 201 với đường dẫn getbasket và nội dung ở body là basket mới được thêm
 
-            return BadRequest("Problem updating basket"); // báo lỗi nếu thêm không thành công
+            return BadRequest("Có lỗi khi cập nhật giỏ hàng"); // báo lỗi nếu thêm không thành công
         }
 
         [HttpDelete]
@@ -44,7 +44,7 @@ namespace API.Controllers
         {
             var basket = await RetrieveBasket();
 
-            if (basket == null) return BadRequest("Unable to retrieve basket");
+            if (basket == null) return BadRequest("Không thể lấy giỏ hàng");
 
             basket.RemoveItem(productId, quantity);
 
@@ -52,7 +52,7 @@ namespace API.Controllers
 
             if (result) return Ok();
 
-            return BadRequest("Problem updating basket");
+            return BadRequest("Có lỗi khi cập nhật giỏ hàng");
         }
 
         private Basket CreateBasket()

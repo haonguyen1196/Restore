@@ -16,10 +16,10 @@ export default function NotFound() {
         >
             <SearchOff sx={{ fontSize: 100 }} color="primary" />
             <Typography gutterBottom variant="h3">
-                Oops - we could not find what you were looking for
+                Oops - Không tìm thấy trang liên quan
             </Typography>
             <Button fullWidth component={Link} to="/catalog">
-                Go back to shop
+                Quay lại cửa hàng
             </Button>
         </Paper>
     );
