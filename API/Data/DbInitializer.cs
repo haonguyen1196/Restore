@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using API.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +8,7 @@ namespace API.Data;
 
 public class DbInitializer
 {
-    public static void InitDb(WebApplication app)
+    public static async Task InitDb(WebApplication app)
     {
         using var scope = app.Services.CreateScope(); // tạo scope từ ứng dụng
         var context = scope.ServiceProvider.GetRequiredService<StoreContext>() // lấy storecontext được đăng ký trong program
@@ -16,10 +17,10 @@ public class DbInitializer
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>() //Lấy UserManager<User> từ Dependency Injection (DI).
        ?? throw new InvalidOperationException("Failed to retrieve user manager"); // Nếu không tìm thấy UserManager<User>, nó sẽ ném lỗi ngay lập tức.
 
-        SeedData(context, userManager); // cung cấp các service
+        await SeedData(context, userManager); // cung cấp các service
     }
 
-    private static async void SeedData(StoreContext context, UserManager<User> userManager)
+    private static async Task SeedData(StoreContext context, UserManager<User> userManager)
     {
         context.Database.Migrate(); // csdl sẽ được cập nhật hoặc tạo nếu cần dựa trên file migration
 

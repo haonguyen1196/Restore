@@ -11,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddDbContext<StoreContext>(opt =>
 {
-    opt.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnecting"));
+    opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnecting"));
 }); //  inject options cho db context
 
 builder.Services.AddCors();// thêm cors
@@ -29,6 +29,10 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 app.UseMiddleware<ExceptionMiddleware>();// sử dụng middle
+
+app.UseDefaultFiles(); // tìm thư mục index
+app.UseStaticFiles(); // Kích hoạt middleware phục vụ các tệp tĩnh như HTML, CSS, JavaScript, hình ảnh từ thư mục wwwroot
+
 app.UseCors(opt =>
 {
     opt.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("https://localhost:3000");
@@ -39,7 +43,8 @@ app.UseAuthorization(); // kiểm tra quyền truy cập tài nguyên
 
 app.MapControllers(); // định tuyến các api controller
 app.MapGroup("api").MapIdentityApi<User>(); //Đặt tất cả các endpoint Identity vào nhóm /api/...
+app.MapFallbackToController("Index", "Fallback"); // chuyển hướng các yêu cầu không khớp với bất kì route nào tới index trong fallback controller
 
-DbInitializer.InitDb(app);
+await DbInitializer.InitDb(app);
 
 app.Run();

@@ -112,7 +112,7 @@ public class PaymentsController(PaymentsService paymentsService, StoreContext co
 
     }
 
-    private Event ConstructStripeEvent(string json)
+    private Event ConstructStripeEvent(string json) // đảm bảo chỉ có ứng dụng mới nhận được webhook từ stripe
     {
         try
         {

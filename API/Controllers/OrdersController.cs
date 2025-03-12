@@ -72,6 +72,9 @@ public class OrdersController(StoreContext context) : BaseApiController
             order.OrderItems = items;
         }
 
+        // xóa giỏ hàng khi tạo order thành công
+        context.Baskets.Remove(basket);
+
         var result = await context.SaveChangesAsync() > 0;
         if (!result) return BadRequest("Có lỗi khi tạo đơn hàng");
 
