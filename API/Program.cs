@@ -1,6 +1,7 @@
 using API.Data;
 using API.Entities;
 using API.Middleware;
+using API.RequestHelpers;
 using API.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -8,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("Cloudinary")); // ánh xạ dữ liệu vào class rồi dùng dữ liệu tại các service
 builder.Services.AddControllers();
 builder.Services.AddDbContext<StoreContext>(opt =>
 {
@@ -15,8 +17,10 @@ builder.Services.AddDbContext<StoreContext>(opt =>
 }); //  inject options cho db context
 
 builder.Services.AddCors();// thêm cors
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()); // autoMapper, load các kế thừa từ profile
 builder.Services.AddTransient<ExceptionMiddleware>();// DI cho middle
 builder.Services.AddScoped<PaymentsService>();
+builder.Services.AddScoped<ImageService>();
 // thêm các endpoint cho hệ thống xác thực người dùng
 builder.Services.AddIdentityApiEndpoints<User>(opt =>
 {

@@ -24,8 +24,8 @@ public class PagedList<T> : List<T>
     {
         var count = await query.CountAsync();
 
-        // skip là vị trí index của bản khi bắt đầu, tính từ 0
-        // take số lượng bản ghi sẻ lấy tính từ skip 
+        // skip là vị trí index của bản ghi bắt đầu, tính từ 0
+        // take số lượng bản ghi sẽ lấy tính từ skip 
         var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
 
         return new PagedList<T>(items, count, pageNumber, pageSize);

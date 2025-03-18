@@ -1,4 +1,4 @@
-import { z } from "zod"; // thư viện các thực validation dữ liệu
+import { z } from "zod"; // thư viện xác thực validation dữ liệu
 
 const passwordValidation = new RegExp(
     /(?=^.{8,}$)(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s)[0-9a-zA-Z!@#$%^&*()]*$/
