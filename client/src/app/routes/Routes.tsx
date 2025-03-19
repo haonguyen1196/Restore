@@ -15,7 +15,7 @@ import RequireAuth from "./RequireAuth";
 import CheckoutSuccess from "../../features/checkout/CheckoutSuccess";
 import OrdersPage from "../../features/orders/OrdersPage";
 import OrderDetailedPage from "../../features/orders/OrderDetailedPage";
-import InventoryPage from "../../features/admin/inventoryPage";
+import InventoryPage from "../../features/admin/InventoryPage";
 
 export const router = createBrowserRouter([
     {
